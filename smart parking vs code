@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Status Rampe</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        .status {
+            font-size: 24px;
+            font-weight: bold;
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        .open {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .closed {
+            background-color: #F44336;
+            color: white;
+        }
+        .buttons {
+            margin-top: 20px;
+        }
+        button {
+            font-size: 18px;
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .open-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .close-btn {
+            background-color: #F44336;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Status Rampe</h1>
+    <div id="rampaStatus" class="status closed">Rampa je spuštena</div>
+    
+    <div class="buttons">
+        <button class="open-btn" onclick="setRampaStatus(true)">Podigni Rampu</button>
+        <button class="close-btn" onclick="setRampaStatus(false)">Spusti Rampu</button>
+    </div>
+
+    <script>
+        // firebase initialization from config.js
+        firebase.initializeApp(firebaseConfig);
+
+        var statusRef = firebase.database().ref("/rampa/status");
+        var statusDiv = document.getElementById("rampaStatus");
+        
+        statusRef.on("value", function(snapshot) {
+            var status = snapshot.val();
+            if (status) {
+                statusDiv.innerText = "Rampa je podignuta";
+                statusDiv.className = "status open";
+            } else {
+                statusDiv.innerText = "Rampa je spuštena";
+                statusDiv.className = "status closed";
+            }
+        });
+
+        function setRampaStatus(status) {
+            statusRef.set(status);
+        }
+    </script>
+</body>
+</html>
